@@ -108,11 +108,18 @@ void endTime2()
 
 void multiWorker(Cvevent& event,int id)
 {
+    static std::mutex  ioLock;
+
+    ioLock.lock();
     std::cout << "multiWorker " << id << " starting\n";
+    ioLock.unlock();
+
 
     event.wait();
 
+    ioLock.lock();
     std::cout << "multiWorker " << id << " ending\n";
+    ioLock.unlock();
 };
 
 
