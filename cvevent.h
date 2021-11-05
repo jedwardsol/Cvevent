@@ -6,7 +6,7 @@
 class Cvevent
 {
 public:
-    void    signal()
+    void    signalAll()
     {
         mutex.lock();
         condition=true;
@@ -14,7 +14,16 @@ public:
         condition_variable.notify_all();           
     }
 
-    void wait() 
+    void    signalOne()
+    {
+        mutex.lock();
+        condition = true;
+        mutex.unlock();
+        condition_variable.notify_one();
+    }
+
+
+    void wait()
     {
         std::unique_lock    lock{mutex};
         condition_variable.wait(lock, [this]{return condition;});

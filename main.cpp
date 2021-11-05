@@ -1,6 +1,7 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
+#include <vector>
 using namespace std::literals;
 
 #include "cvevent.h"
@@ -30,7 +31,7 @@ void periodic()
     std::this_thread::sleep_for(10s);
 
     std::cout << "signalling\n";
-    event.signal();
+    event.signalOne();
     thread.join();
     std::cout << "done\n";
 }
@@ -55,7 +56,7 @@ void oneShot()
     std::this_thread::sleep_for(3s);
 
     std::cout << "signalling\n";
-    event.signal();
+    event.signalAll();
     thread.join();
     std::cout << "done\n";
 }
@@ -99,18 +100,101 @@ void endTime2()
 
     std::this_thread::sleep_for(3s);
     std::cout << "signalling\n";
-    event.signal();
+    event.signalOne();
     thread.join();
     std::cout << "Done\n";
 }
 
+
+void multiWorker(Cvevent& event,int id)
+{
+    std::cout << "multiWorker " << id << " starting\n";
+
+    event.wait();
+
+    std::cout << "multiWorker " << id << " ending\n";
+};
+
+
+
+
+void signalAll()
+{
+    Cvevent                     event;
+
+    std::vector<std::thread>    threads;
+
+    for(int i=0;i<5;i++)
+    {
+        threads.emplace_back(multiWorker,std::ref(event),i);
+    }
+
+
+    std::this_thread::sleep_for(3s);
+
+    std::cout << "signalling\n";
+    event.signalAll();
+
+    for(auto &thread : threads)
+    {
+        thread.join();
+    }
+
+    std::cout << "done\n";
+}
+
+
+
+void signalOne()
+{
+    Cvevent                     event;
+
+    std::vector<std::thread>    threads;
+
+    for (int i = 0; i < 5; i++)
+    {
+        threads.emplace_back(multiWorker, std::ref(event), i);
+    }
+
+    for (int i = 0; i < 5; i++)
+    {
+        std::this_thread::sleep_for(1s);
+        event.signalOne();
+    }
+
+
+    for (auto& thread : threads)
+    {
+        thread.join();
+    }
+
+    std::cout << "done\n";
+}
 
 
 
 int main()
 {
     periodic();
+
+    std::cout << "\n---\n\n";
+
     endTime1();
+
+    std::cout << "\n---\n\n";
+
     endTime2();
+
+    std::cout << "\n---\n\n";
+
     oneShot();
+
+    std::cout << "\n---\n\n";
+
+    signalAll();
+
+    std::cout << "\n---\n\n";
+
+    signalOne();
+
 }
