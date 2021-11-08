@@ -4,7 +4,7 @@
 #include <vector>
 using namespace std::literals;
 
-#include "CondVar.h"
+#include "CondVar/CondVar.h"
 
 
 namespace
@@ -130,12 +130,11 @@ void multiWorker(CondVar::Condition& event, int id)
 void signalAll()
 {
     CondVar::Condition          event;
+    std::array<std::thread,5>   threads;
 
-    std::vector<std::thread>    threads;
-
-    for (int i = 0; i < 5; i++)
+    for (int i{}; auto &thread : threads)
     {
-        threads.emplace_back(multiWorker, std::ref(event), i);
+        thread = std::thread{multiWorker, std::ref(event), i++};
     }
 
 
@@ -157,12 +156,11 @@ void signalAll()
 void signalOne()
 {
     CondVar::Condition            event;
+    std::array<std::thread, 5>   threads;
 
-    std::vector<std::thread>    threads;
-
-    for (int i = 0; i < 5; i++)
+    for (int i{}; auto & thread : threads)
     {
-        threads.emplace_back(multiWorker, std::ref(event), i);
+        thread = std::thread{ multiWorker, std::ref(event), i++ };
     }
 
     for (int i = 0; i < 5; i++)
@@ -207,4 +205,11 @@ void testCondition()
 
     signalOne();
 
+}
+
+
+
+int main()
+{
+    testCondition();
 }

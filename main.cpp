@@ -1,8 +1,6 @@
-void testCondition();
-void testStopGo();
+#include "condvar/CondVar.h"
+
 
 int main()
 {
-    testStopGo();
-    testCondition();
 }

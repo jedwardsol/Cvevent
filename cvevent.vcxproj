@@ -143,9 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Condition.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="StopGo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CondVar.h" />
